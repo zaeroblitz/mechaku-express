@@ -20,7 +20,6 @@ module.exports = {
           message: "Successfully get brands data with thumbnail",
           data: brand,
           method: req.method,
-          url: req.url,
         });
       } else {
         const brand = await Brand.create({

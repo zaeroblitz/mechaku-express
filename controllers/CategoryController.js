@@ -95,7 +95,7 @@ module.exports = {
         res.send({
           status: "success",
           statusCode: res.statusCode,
-          message: "Succesfully update selected category",
+          message: "Succesfully update selected category with new thumbnail",
           method: req.method,
         });
       } else {

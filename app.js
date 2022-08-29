@@ -10,12 +10,15 @@ const os = require("os");
 
 const { url } = require("./config");
 
+const authRouter = require("./routes/auth");
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const brandsRouter = require("./routes/brands");
-const categoriesRouter = require("./routes/categories");
 const gradesRouter = require("./routes/grades");
+const couriersRouter = require("./routes/courier");
+const paymentsRouter = require("./routes/payments");
 const productsRouter = require("./routes/products");
+const categoriesRouter = require("./routes/categories");
 const transactionRouter = require("./routes/transaction");
 const transactionStatusRouter = require("./routes/transaction_status");
 
@@ -37,11 +40,14 @@ app.use(express.static(path.join(__dirname, "public")));
 mongoose.connect(url);
 
 app.use("/", indexRouter);
+app.use("/auth", authRouter);
 app.use("/api/user", usersRouter);
 app.use("/api/brand", brandsRouter);
-app.use("/api/category", categoriesRouter);
 app.use("/api/grade", gradesRouter);
+app.use("/api/courier", couriersRouter);
+app.use("/api/payment", paymentsRouter);
 app.use("/api/product", productsRouter);
+app.use("/api/category", categoriesRouter);
 app.use("/api/transaction", transactionRouter);
 app.use("/api/transaction-status", transactionStatusRouter);
 

@@ -234,6 +234,17 @@ module.exports = {
     try {
       const id = req.params.id;
       const product = await Product.findById(id);
+      const productDetails = await ProductDetail.findById(product.details._id);
+
+      if (productDetails.images) {
+        productDetails.images.forEach((image) => {
+          const currentThumbnail = `${rootPath}/public/uploads/products/${image}`;
+
+          if (fs.existsSync(currentThumbnail)) {
+            fs.unlinkSync(currentThumbnail);
+          }
+        });
+      }
 
       await Product.findByIdAndRemove(id);
       await ProductDetail.findByIdAndRemove(product.details);

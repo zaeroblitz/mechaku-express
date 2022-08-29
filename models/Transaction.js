@@ -2,10 +2,10 @@ const mongoose = require("mongoose");
 
 const TransactionSchema = mongoose.Schema({
   value: {
-    type: number,
+    type: Number,
   },
   tax: {
-    type: number,
+    type: Number,
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
