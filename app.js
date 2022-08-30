@@ -11,6 +11,7 @@ const os = require("os");
 const { url } = require("./config");
 
 const authRouter = require("./routes/auth");
+const cartRouter = require("./routes/carts");
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const brandsRouter = require("./routes/brands");
@@ -42,6 +43,7 @@ mongoose.connect(url);
 app.use("/", indexRouter);
 app.use("/auth", authRouter);
 app.use("/api/user", usersRouter);
+app.use("/api/carts", cartRouter);
 app.use("/api/brand", brandsRouter);
 app.use("/api/grade", gradesRouter);
 app.use("/api/courier", couriersRouter);
