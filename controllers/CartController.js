@@ -28,18 +28,41 @@ module.exports = {
           method: req.method,
         });
       } else {
-        const cart = await Cart.findOneAndUpdate(
+        await Cart.findOneAndUpdate(
           { user: user },
           {
             $push: { items: cartItem._id },
           }
         );
 
+        const newItem = await CartItem.findById(cartItem._id).populate({
+          path: "product",
+          model: "Product",
+          populate: [
+            {
+              path: "brand",
+              model: "Brand",
+            },
+            {
+              path: "category",
+              model: "Category",
+            },
+            {
+              path: "details",
+              model: "Product_Detail",
+            },
+            {
+              path: "grade",
+              model: "Grade",
+            },
+          ],
+        });
+
         res.send({
           status: "success",
           statusCode: res.statusCode,
           message: "Succesfully update user cart",
-          data: cart,
+          data: newItem,
           method: req.method,
         });
       }
@@ -59,6 +82,24 @@ module.exports = {
           populate: {
             path: "product",
             model: "Product",
+            populate: [
+              {
+                path: "brand",
+                model: "Brand",
+              },
+              {
+                path: "category",
+                model: "Category",
+              },
+              {
+                path: "details",
+                model: "Product_Detail",
+              },
+              {
+                path: "grade",
+                model: "Grade",
+              },
+            ],
           },
         });
 
@@ -86,6 +127,24 @@ module.exports = {
           populate: {
             path: "product",
             model: "Product",
+            populate: [
+              {
+                path: "brand",
+                model: "Brand",
+              },
+              {
+                path: "category",
+                model: "Category",
+              },
+              {
+                path: "details",
+                model: "Product_Detail",
+              },
+              {
+                path: "grade",
+                model: "Grade",
+              },
+            ],
           },
         });
 
@@ -134,7 +193,6 @@ module.exports = {
     try {
       const user = req.params.user;
       const { item } = req.body;
-      const itemId = mongoose.Types.ObjectId(item);
 
       await Cart.findOneAndUpdate(
         { user },

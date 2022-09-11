@@ -100,6 +100,10 @@ module.exports = {
           statusCode: res.statusCode,
           message: "Successfully update selected grade data with new thumbnail",
           method: req.method,
+          data: {
+            name,
+            thumbnail: file.filename,
+          },
         });
       } else {
         await Grade.findByIdAndUpdate(id, { name });
@@ -109,6 +113,9 @@ module.exports = {
           statusCode: res.statusCode,
           message: "Successfully update selected grade data",
           method: req.method,
+          data: {
+            name,
+          },
         });
       }
     } catch (err) {
@@ -130,7 +137,7 @@ module.exports = {
         }
       }
 
-      await Grade.findOneAndRemove(id);
+      await Grade.findByIdAndRemove(id);
 
       res.send({
         status: "success",

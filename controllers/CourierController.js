@@ -103,6 +103,7 @@ module.exports = {
           statusCode: res.statusCode,
           message: "Successfully update courier data with new thumbnail",
           method: req.method,
+          data: { name, thumbnail: file.filename },
         });
       } else {
         await Courier.findByIdAndUpdate(id, { name });
@@ -112,6 +113,7 @@ module.exports = {
           statusCode: res.statusCode,
           message: "Successfully update courier data",
           method: req.method,
+          data: { name },
         });
       }
     } catch (err) {

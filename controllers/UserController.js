@@ -2,6 +2,7 @@ const fs = require("fs");
 const { rootPath } = require("../config");
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const { findById } = require("../models/User");
 
 module.exports = {
   postUserHandler: async (req, res) => {
@@ -103,35 +104,81 @@ module.exports = {
       const id = req.params.id;
       const file = req.file;
       const { name, password, phone_number } = req.body;
-      const hashedPassword = bcrypt.hashSync(password, 10);
 
       if (file) {
-        await User.findByIdAndUpdate(id, {
-          name,
-          password: hashedPassword,
-          avatar: file.filename,
-          phone_number,
-        });
+        const { avatar } = await User.findById(id);
+        if (avatar) {
+          const currentThumbnailPath = `${rootPath}/public/uploads/users/${avatar}`;
 
-        res.send({
-          tatus: "success",
-          statusCode: res.statusCode,
-          message: "Successfully update selected user data with new avatar",
-          method: req.method,
-        });
+          if (fs.existsSync(currentThumbnailPath)) {
+            fs.unlinkSync(currentThumbnailPath);
+          }
+        }
+
+        if (password) {
+          const hashedPassword = bcrypt.hashSync(password, 10);
+
+          await User.findByIdAndUpdate(id, {
+            name,
+            password: hashedPassword,
+            avatar: file.filename,
+            phone_number,
+          });
+
+          res.send({
+            status: "success",
+            statusCode: res.statusCode,
+            message:
+              "Successfully update selected user data with new avatar & password",
+            method: req.method,
+            data: { name, phone_number, avatar: file.filename },
+          });
+        } else {
+          await User.findByIdAndUpdate(id, {
+            name,
+            avatar: file.filename,
+            phone_number,
+          });
+
+          res.send({
+            status: "success",
+            statusCode: res.statusCode,
+            message: "Successfully update selected user data with new avatar",
+            method: req.method,
+            data: { name, phone_number, avatar: file.filename },
+          });
+        }
       } else {
-        await User.findByIdAndUpdate(id, {
-          name,
-          password: hashedPassword,
-          phone_number,
-        });
+        if (password) {
+          const hashedPassword = bcrypt.hashSync(password, 10);
 
-        res.send({
-          tatus: "success",
-          statusCode: res.statusCode,
-          message: "Successfully update selected user data",
-          method: req.method,
-        });
+          await User.findByIdAndUpdate(id, {
+            name,
+            password: hashedPassword,
+            phone_number,
+          });
+
+          res.send({
+            status: "success",
+            statusCode: res.statusCode,
+            message: "Successfully update selected user data with new password",
+            method: req.method,
+            data: { name, phone_number },
+          });
+        } else {
+          await User.findByIdAndUpdate(id, {
+            name,
+            phone_number,
+          });
+
+          res.send({
+            status: "success",
+            statusCode: res.statusCode,
+            message: "Successfully update selected user data",
+            data: { name, phone_number },
+            method: req.method,
+          });
+        }
       }
     } catch (err) {
       res.status(500).send({
@@ -143,8 +190,7 @@ module.exports = {
   deleteUserHandler: async (req, res) => {
     try {
       const id = req.params.id;
-      const user = await User.findByIdAndRemove(id);
-      const avatar = user.avatar;
+      const { avatar } = await User.findById(id);
 
       if (avatar) {
         const currentThumbnailPath = `${rootPath}/public/uploads/users/${avatar}`;
@@ -153,6 +199,8 @@ module.exports = {
           fs.unlinkSync(currentThumbnailPath);
         }
       }
+
+      await User.findByIdAndRemove(id);
 
       res.send({
         tatus: "success",

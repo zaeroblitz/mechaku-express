@@ -97,6 +97,10 @@ module.exports = {
           statusCode: res.statusCode,
           message: "Successfully update brand data with new thumbnail",
           method: req.method,
+          data: {
+            name,
+            thumbnail: file.filename,
+          },
         });
       } else {
         await Brand.findByIdAndUpdate(id, { name });
@@ -104,6 +108,9 @@ module.exports = {
           status: "success",
           message: "Successfully update brand data",
           method: req.method,
+          data: {
+            name,
+          },
         });
       }
     } catch (err) {

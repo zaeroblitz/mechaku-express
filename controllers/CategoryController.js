@@ -97,6 +97,10 @@ module.exports = {
           statusCode: res.statusCode,
           message: "Succesfully update selected category with new thumbnail",
           method: req.method,
+          data: {
+            name,
+            thumbnail: file.filename,
+          },
         });
       } else {
         await Category.findByIdAndUpdate(id, {
@@ -108,6 +112,9 @@ module.exports = {
           statusCode: res.statusCode,
           message: "Succesfully update selected category",
           method: req.method,
+          data: {
+            name,
+          },
         });
       }
     } catch (err) {
