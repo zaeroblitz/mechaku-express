@@ -6,13 +6,25 @@ const TransactionStatus = require("../models/TransactionStatus");
 module.exports = {
   postTransactionHandler: async (req, res) => {
     try {
-      const { value, tax, user, product, transactionStatus } = req.body;
-
-      const transaction = await Transaction.create({
+      const {
+        user,
+        address,
+        products,
+        courier,
+        payment,
         value,
         tax,
+        transactionStatus,
+      } = req.body;
+
+      const transaction = await Transaction.create({
         user,
-        product,
+        address,
+        products,
+        courier,
+        payment,
+        value,
+        tax,
         transactionStatus,
       });
 
@@ -35,6 +47,8 @@ module.exports = {
       const transactions = await Transaction.find()
         .populate("user")
         .populate("product")
+        .populate("courier")
+        .populate("payment")
         .populate("transactionStatus");
 
       res.send({
@@ -60,6 +74,8 @@ module.exports = {
       })
         .populate("user")
         .populate("product")
+        .populate("courier")
+        .populate("payment")
         .populate("transactionStatus");
 
       res.send({
@@ -83,6 +99,8 @@ module.exports = {
       const transaction = await Transaction.findById(id)
         .populate("user")
         .populate("product")
+        .populate("courier")
+        .populate("payment")
         .populate("transactionStatus");
 
       res.send({

@@ -33,13 +33,19 @@ module.exports = {
           });
         });
 
-        const product = await Product.create({
+        const newProduct = await Product.create({
           name,
           category,
           brand,
           grade,
           details: productDetail._id,
         });
+
+        const product = await Product.findById(newProduct._id)
+          .populate("category", "name thumbnail")
+          .populate("brand", "name thumbnail")
+          .populate("grade", "name thumbnail")
+          .populate("details");
 
         res.send({
           status: "success",

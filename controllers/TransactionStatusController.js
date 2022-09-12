@@ -71,6 +71,7 @@ module.exports = {
         statusCode: res.statusCode,
         message: "Successfully update selected transaction status",
         method: req.method,
+        data: { name },
       });
     } catch (err) {
       res.status(500).send({

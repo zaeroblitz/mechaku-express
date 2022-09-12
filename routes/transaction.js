@@ -8,7 +8,7 @@ const {
 const router = express.Router();
 
 router.get("/", getAllTransactionHandler);
-router.get("/", getAllTransactionByUserHandler);
+router.get("/user/:id", getAllTransactionByUserHandler);
 router.get("/:id", getTransactionByIdHandler);
 router.post("/", postTransactionHandler);
 

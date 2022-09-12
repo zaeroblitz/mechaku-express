@@ -107,6 +107,10 @@ module.exports = {
           message:
             "Succesfully update selected payment data with new thumbnail",
           method: req.method,
+          data: {
+            name,
+            thumbnail: file.filename,
+          },
         });
       } else {
         await Payment.findByIdAndUpdate(id, { name });
@@ -116,6 +120,7 @@ module.exports = {
           statusCode: res.statusCode,
           message: "Succesfully update selected payment data",
           method: req.method,
+          data: { name },
         });
       }
     } catch (err) {
