@@ -121,9 +121,10 @@ module.exports = {
     try {
       const user = req.params.user;
       const cart = await Cart.findOne({ user })
-        .populate("user")
+        .populate("user", "name")
         .populate({
           path: "items",
+          match: { status: "onCart" },
           populate: {
             path: "product",
             model: "Product",

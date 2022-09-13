@@ -1,5 +1,8 @@
 const User = require("../models/User");
+const Cart = require("../models/Cart");
+const CartItem = require("../models/CartItem");
 const Product = require("../models/Product");
+const ProductDetail = require("../models/ProductDetail");
 const Transaction = require("../models/Transaction");
 const TransactionStatus = require("../models/TransactionStatus");
 
@@ -9,17 +12,19 @@ module.exports = {
       const {
         user,
         address,
+        cartItems,
         products,
         courier,
         payment,
         value,
         tax,
-        transactionStatus,
+        transactionStatus = "630307b53b0356668342357d",
       } = req.body;
 
       const transaction = await Transaction.create({
         user,
         address,
+        cartItems,
         products,
         courier,
         payment,
@@ -27,6 +32,34 @@ module.exports = {
         tax,
         transactionStatus,
       });
+
+      const transactionExists = await Transaction.findById(transaction._id);
+
+      if (transactionExists) {
+        cartItems.forEach(async (cart, index) => {
+          const item = await CartItem.findOneAndUpdate(
+            {
+              id: cart,
+              product: products[index],
+            },
+            {
+              status: "onCheckout",
+            }
+          );
+
+          const itemAmount = item.amount;
+          const minusItemAmount = -Math.abs(itemAmount);
+          console.log(itemAmount);
+          console.log(minusItemAmount);
+          const { details } = await Product.findById(
+            products[index],
+            "details"
+          );
+          await ProductDetail.findByIdAndUpdate(details, {
+            $inc: { quantity: minusItemAmount, sold: itemAmount },
+          });
+        });
+      }
 
       res.send({
         status: "success",
@@ -46,7 +79,32 @@ module.exports = {
     try {
       const transactions = await Transaction.find()
         .populate("user")
-        .populate("product")
+        .populate({
+          path: "cartItems",
+          model: "Cart_Item",
+        })
+        .populate({
+          path: "products",
+          model: "Product",
+          populate: [
+            {
+              path: "brand",
+              model: "Brand",
+            },
+            {
+              path: "category",
+              model: "Category",
+            },
+            {
+              path: "details",
+              model: "Product_Detail",
+            },
+            {
+              path: "grade",
+              model: "Grade",
+            },
+          ],
+        })
         .populate("courier")
         .populate("payment")
         .populate("transactionStatus");
@@ -67,13 +125,38 @@ module.exports = {
   },
   getAllTransactionByUserHandler: async (req, res) => {
     try {
-      const userId = req.query.userId;
+      const userId = req.params.id;
 
       const transactions = await Transaction.find({
         user: userId,
       })
         .populate("user")
-        .populate("product")
+        .populate({
+          path: "cartItems",
+          model: "Cart_Item",
+        })
+        .populate({
+          path: "products",
+          model: "Product",
+          populate: [
+            {
+              path: "brand",
+              model: "Brand",
+            },
+            {
+              path: "category",
+              model: "Category",
+            },
+            {
+              path: "details",
+              model: "Product_Detail",
+            },
+            {
+              path: "grade",
+              model: "Grade",
+            },
+          ],
+        })
         .populate("courier")
         .populate("payment")
         .populate("transactionStatus");
@@ -98,7 +181,32 @@ module.exports = {
 
       const transaction = await Transaction.findById(id)
         .populate("user")
-        .populate("product")
+        .populate({
+          path: "cartItems",
+          model: "Cart_Item",
+        })
+        .populate({
+          path: "products",
+          model: "Product",
+          populate: [
+            {
+              path: "brand",
+              model: "Brand",
+            },
+            {
+              path: "category",
+              model: "Category",
+            },
+            {
+              path: "details",
+              model: "Product_Detail",
+            },
+            {
+              path: "grade",
+              model: "Grade",
+            },
+          ],
+        })
         .populate("courier")
         .populate("payment")
         .populate("transactionStatus");

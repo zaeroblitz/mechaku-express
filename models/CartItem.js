@@ -11,6 +11,10 @@ const cartItemSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
+    status: {
+      type: String,
+      default: "onCart",
+    },
   },
   { timestamps: true }
 );

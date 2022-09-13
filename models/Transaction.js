@@ -8,6 +8,12 @@ const TransactionSchema = mongoose.Schema({
   address: {
     type: String,
   },
+  cartItems: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Cart_item",
+    },
+  ],
   products: [
     {
       type: mongoose.Schema.Types.ObjectId,
