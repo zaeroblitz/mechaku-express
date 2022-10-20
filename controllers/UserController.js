@@ -1,6 +1,7 @@
 const fs = require("fs");
 const { rootPath } = require("../config");
 const User = require("../models/User");
+const Cart = require("../models/Cart");
 const bcrypt = require("bcrypt");
 const { findById } = require("../models/User");
 
@@ -29,6 +30,11 @@ module.exports = {
           wishlists,
         });
 
+        await Cart.create({
+          user: user._id,
+          items: [],
+        })
+
         res.send({
           status: "success",
           statusCode: res.statusCode,
@@ -46,6 +52,11 @@ module.exports = {
           phone_number,
           wishlists,
         });
+
+        await Cart.create({
+          user: user._id,
+          items: [],
+        })
 
         res.send({
           status: "success",

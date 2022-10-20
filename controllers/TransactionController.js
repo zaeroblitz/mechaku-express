@@ -43,14 +43,12 @@ module.exports = {
               product: products[index],
             },
             {
-              status: "onCheckout",
+              status: "transaction-pending",
             }
           );
 
           const itemAmount = item.amount;
           const minusItemAmount = -Math.abs(itemAmount);
-          console.log(itemAmount);
-          console.log(minusItemAmount);
           const { details } = await Product.findById(
             products[index],
             "details"
@@ -68,6 +66,30 @@ module.exports = {
         data: transaction,
         method: req.method,
       });
+    } catch (err) {
+      res.status(500).send({
+        status: "failed",
+        message: err.message || "Internal Server Error",
+      });
+    }
+  },
+  updateTransactionStatusHandler: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { transactionStatus } = req.body;
+
+      console.log(transactionStatus);
+
+      const transaction = await Transaction.findByIdAndUpdate(id, { transactionStatus });
+
+      res.send({
+        status: "success",
+        statusCode: res.statusCode,
+        message: "Successfully update transaction status",
+        method: req.method,
+        data: transaction,
+      });
+
     } catch (err) {
       res.status(500).send({
         status: "failed",
@@ -108,6 +130,8 @@ module.exports = {
         .populate("courier")
         .populate("payment")
         .populate("transactionStatus");
+
+        console.log(transactions);
 
       res.send({
         status: "success",
